@@ -9,14 +9,33 @@ import { motion, AnimatePresence } from "motion/react";
 import { Html5Qrcode } from "html5-qrcode";
 import { QRCodeSVG } from "qrcode.react";
 
-// Pre-generate a fixed set of 100 random strings for the QR codes
-const QR_BASE64_SET = [
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAANwSURBVO3BQa7cVgADweaD7n/ljhdZcCVgIM2P7bAq/sLMvw4z5TBTDjPlMFMOM+UwUw4z5TBTDjPlMFMOM+UwUw4z5TBTDjPl4qEk/CSVloSm0pLwJpWWhKbSkvCTVJ44zJTDTDnMlIuXqbwpCW9SaUm4o/ImlTcl4U2HmXKYKYeZcvFlSfiEyhNJaCotCU3lv5SET6h802GmHGbKYaZc/OFUWhLelISm8jc7zJTDTDnMlIs/XBKayk9S+ZscZsphphxmysWXqXyTSktCU7mThKbSVL5J5XdymCmHmXKYKRcvS8JPSkJTaUloKi0Jd5LQVFoSmsqdJPzODjPlMFMOMyX+wl8kCU2lJaGptCQ0lZaEOyp/ssNMOcyUw0y5eCgJTeVOEr5JpSWhqbQkNJUnktBU7iShqbQkfELlicNMOcyUw0y5+LIkNJWWhKZyJwl3kvBEEprKHZVvUrmThDcdZsphphxmysWXqdxRaUm4o/JEEprKm5JwR+VOEu6oNJU3HWbKYaYcZkr8hQeS8E0qLQlNpSWhqbQkfEKlJeFNKneS8AmVJw4z5TBTDjPl4mUqLQl3VFoSWhLuJKGpPKHyhEpLQlO5k4Sm0pLwTYeZcpgph5lymCmHmXKYKxcuS8JPSkJTaUloKi0Jd5LQVFoSmsqdJPzODjPlMFMOM+UwUy5epnInCU3lE0loKi0JTeWbktBU7iShqdxRaUloKm86zJTDTDnMlIsvS8KdJHxTEp5IQlO5k4RPJOGJJDSVJw4z5TBTDjPl4iGVOyrflIQ7Ki0J36TyiSTcScJPOsyUw0w5zJSLh5Lwk1Q+kYQ7KndUWhI+kYSm8gmVloRvOsyUw0w5zJSLl6m8KQm/E5WWhDsqn1D5hMqbDjPlMFMOM+Xiy5LwCZU3qdxJQlNpSWgqd5LwRBI+kYSm8sRhphxmymGmXPzPJOEnqdxJwh2VO0l402GmHGbKYaZc/OFU7iShqTyRhDsqn1C5k4SfdJgph5lymCkXX6byk5LQVO4koak0lZaENyXhCZU3HWbKYaYcZkr8hQeS8JNUWhKaSktCU7mThDsqLQlvUmlJ+ITKE4eZcpgph5kSf2HmX4eZcpgph5lymCmHmXKYKYeZcpgph5lymCmHmXKYKYeZcpgph5nyD3RiehMPwkKyAAAAAElFTkSuQmCC",
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAANtSURBVO3BQY7cSBAEQY8E//9lXx32kKcCCLJbmkGYxT+o+t9QtQxVy1C1DFXLULUMVctQtQxVy1C1DFXLULUMVctQtQxVy1C1XDyUhG9S2ZKwqTyRhBOVLQmbypaEb1J5YqhahqplqFouXqbypiS8KQl3qLxJ5U1JeNNQtQxVy1C1XHxYEu5Q+SaVvykJd6h80lC1DFXLULVc/HAqWxLuSMKmsiVhU/nNhqplqFqGquXih0vCicpJEp5Q+U2GqmWoWoaq5eLDVD5JZUvCm1Q+SeVfMlQtQ9UyVC0XL0vCNyVhU9mSsKnckYRNZUvCpnKShH/ZULUMVctQtcQ/+EWScIfKloRNZUvCicpPNlQtQ9UyVC0XDyVhUzlJwt+kcqLyRBI2lZMkbCpbEu5QeWKoWoaqZahaLl6WhBOVT0rCpnKShBOVE5U3JeFE5ZOGqmWoWoaq5eIhlS0Jm8qWhBOVLQmbypaETeUkCScqTyThROWJJJyoPDFULUPVMlQtFw8lYVM5UdmScKJyRxJOVE6SsKmcJOGOJGwqJ0nYVLYkvGmoWoaqZahaLh5SeVMSnlC5IwmbyhMqWxI2lTtUtiR80lC1DFXLULVcPJSEE5UnVLYkbCpvSsKmcqLymwxVy1C1DFXLxYcl4UTlJAl3JGFTuUNlS8Km8klJ+JuGqmWoWoaq5eJlKnckYVPZVE6SsKm8SeUkCZvKSRI2lTtUPmmoWoaqZahaLj4sCZvKSRKeSMKJyqZykoRN5SQJdyThROUkCZvKE0PVMlQtQ9US/+AHS8KJyiclYVO5IwlvUnliqFqGqmWoWi4eSsI3qZyo3JGET0rCpnKicpKETxqqlqFqGaqWi5epvCkJdyRhU9mScKKyJWFT2ZJwonJHEjaVE5U3DVXLULUMVcvFhyXhDpUnVLYk3JGEJ5LwhModSdhUnhiqlqFqGaqWi18mCScqJ0nYVJ5QOUnCloRNZVPZkvCmoWoZqpaharn44VTuSMKmsqmcJOFE5Q6VkyR801C1DFXLULVcfJjKNyXhRGVLwqayJeGTkvCEypuGqmWoWoaq5eJlSfimJJyonKjcobIlYUvCEypbEk6SsKk8MVQtQ9UyVC3xD6r+N1QtQ9UyVC1D1TJULUPVMlQtQ9UyVC1D1TJULUPVMlQtQ9UyVC3/AWy1dhFOl2FrAAAAAElFTkSuQmCC",
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAOFSURBVO3BQQrk2AFEwZcf3f/Kz70YTK4EQlVl95AR8Q9m/nGYKYeZcpgph5lymCmHmXKYKYeZcpgph5lymCmHmXKYKYeZcpgpFy8l4ZdUWhKayp0kNJWWhDsqLQlNpSXhl1TeOMyUw0w5zJSLD1P5pCQ8kYSm0lSeUPkklU9KwicdZsphphxmysWXJeEJlTdUWhKaSktCU/mlJDyh8k2HmXKYKYeZcvGXU2lJuJOEpnInCU3l3+wwUw4z5TBTLv5ySbij0pLQktBUnlD5NznMlMNMOcyUiy9T+SaVloSWhDsqd1S+SeX/yWGmHGbKYaZcfFgSfikJTaUloam0JDSVloSm0pLQVO4k4f/ZYaYcZsphpsQ/mP9KQlNpSbij8jc7zJTDTDnMlIuXktBU7iThm1TuJOGOyhtJaCp3ktBUWhKeUHnjMFMOM+UwUy5eUmlJaCpPqNxJQlN5QuVOEprKHZVfUmlJ+KTDTDnMlMNMufgxlZaEO0loKi0JT6i0JDSVN5JwR+VOEu4koal80mGmHGbKYaZcfFkS3lBpSXhCpSWhqbQkNJU7SXgiCU3lThKaSktCU3njMFMOM+UwUy6+TOVOEloS7qi0JLyRhKbyhkpLQlN5QqUl4ZsOM+UwUw4z5eKlJDyRhKbSktBU7qi0JNxRaUloSWgqd1S+KQl3VD7pMFMOM+UwUy6+LAlN5Ykk/JLKHZVfUrmThKbyxmGmHGbKYaZcfJjKGypvJOGNJNxRaUloKneS0FRaEppKS8I3HWbKYaYcZsrFjyXhjkpLQlNpSWgqLQl3VFoSmsoTSXgiCW+ofNJhphxmymGmXLyk8oTKEypvqPySyhNJaCpPJKGpvHGYKYeZcpgpFy8l4ZdU7iThjkpLwp0kvJGEpnInCf9Lh5lymCmHmXLxYSqflIQ3VFoSmsobSbij8k0qn3SYKYeZcpgpF1+WhCdUfikJT6jcScInqbQktCQ0lTcOM+UwUw4z5eJfLgl3VFoSmsobKneS8IRKS8InHWbKYaYcZsrFX07lThKaSkvCnSQ8ofKEyp0k/NJhphxmymGmXHyZyi8l4Q2VO0n4pCS8ofJJh5lymCmHmRL/4IUk/JJKS8IdlSeS0FTuJOGTVFoSnlB54zBTDjPlMFPiH8z84zBTDjPlMFMOM+UwUw4z5TBTDjPlMFMOM+UwUw4z5TBTDjPlMFP+Ay3qixTJr3D8AAAAAElFTkSuQmCC",
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAOXSURBVO3BQY4cSQIDQWeg/v9lXx3mwFMAiazWSLM0i78w84/DTDnMlMNMOcyUw0w5zJTDTDnMlMNMOcyUw0w5zJTDTDnMlMNM+fBSEn4nlZaEptKS8ITKNyXhd1J54zBTDjPlMFM+fJnKNyXhiSQ0lZaEpvJGEprKjco3JeGbDjPlMFMOM+XDD0vCEypPqDyh0pLQVG6S8E1JeELlJx1mymGmHGbKh79cEm5UfpLKf8lhphxmymGmfPjLqdwkoak0lZsk/D85zJTDTDnMlA+/TOVPloQblZ+k8ic5zJTDTDnMlA9floTfKQlN5Q2VloSm0pLQVG6S8Cc7zJTDTDnMlPgLf7EkNJWflIQblb/ZYaYcZsphpnx4KQlNpSXhRqUl4QmVmyQ0lTdUWhJuktBUbpLQVFoSblTeOMyUw0w5zJQP/7Ik3Ki0JNwk4SYJTaUl4UblCZUnVFoSfqfDTDnMlMNM+fCSyhsqLQktCTdJuFG5SUJTeUKlJaGp3CShqdyotCR802GmHGbKYaZ8+LIkNJU3VFoSmkpLwk0S3kjCjcoTKi0JN0loKt90mCmHmXKYKR9eSkJTuUnCjUpLQlNpSWgqLQlNpSWhJeEJlZaEb1K5SUJTeeMwUw4z5TBTPryk0pJwo3KThKbSkvBGEppKS8I3qbQkNJWWhCdUvukwUw4z5TBTPvwwlZaEpnKThKZyk4Sm8oRKS8ITKjcqf7LDTDnMlMNM+fBSEppKS8JNEm5UnlB5Igk3Ki0JTyThCZUnktBU3jjMlMNMOcyUDy+pPKHSktBUWhJuVG6S0FSayhtJ+C85zJTDTDnMlPgLf7EkNJWbJLyh0pLQVJ5IQlP5Nx1mymGmHGbKh5eS8DupPJGEN1RaEp5IQlO5ScKNSktCU3njMFMOM+UwUz58mco3JeGJJDSVJ5LQktBUWhJuVN5Q+Z0OM+UwUw4z5cMPS8ITKk+ovJGEJ5Jwk4RvSsKNyjcdZsphphxmyoe/XBKaSktCU7lRaUm4UWlJaCpvJKGptCQ0lTcOM+UwUw4z5cN/TBKayo1KS0JTuUlCU2lJaCo3SbhJQlP5psNMOcyUw0z58MNUfpLKTRJuVG6S8EQSbpLwhkpLQlN54zBTDjPlMFM+fFkSfqck3Ki0JLyh8kQSmsqf7DBTDjPlMFPiL8z84zBTDjPlMFMOM+UwUw4z5TBTDjPlMFMOM+UwUw4z5TBTDjPlMFP+B3YQjike1sepAAAAAElFTkSuQmCC",
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAOZSURBVO3BQY4jSQIDQWdA//+ybx/mwFMAQkrVU7M0i38w84/DTDnMlMNMOcyUw0w5zJTDTDnMlMNMOcyUw0w5zJTDTDnMlMNMefFQEn6SSkvCEyotCTcqLQlNpSXhJ6k8cZgph5lymCkvPkzlk5Jwo9KS8IRKS8InqXxSEj7pMFMOM+UwU158WRLeofKOJDSV3yQJ71D5psNMOcyUw0x58cuptCQ8odJUblT+Sw4z5TBTDjPlxX+cyjuScKPSktBUfrPDTDnMlMNMefFlKt+UhCeS0FR+ksq/yWGmHGbKYaa8+LAk/E0qLQlN5R1JaCpPJOHf7DBTDjPlMFPiH/wfSUJTuUnCO1R+s8NMOcyUw0x58VASmkpLQlN5RxJuVH6TJDSVmyQ0lZaEpvLEYaYcZsphprx4SOWJJNyo3CShqdyotCR8UxKayhNJ+KbDTDnMlMNMefFhSWgqLQlN5SYJTeUmCU3lCZWWhJsk3CThHSotCd90mCmHmXKYKS8eSkJTuVFpSWgqTaUl4R1J+CaVdyShqbQk3Ki0JHzSYaYcZsphprz4siQ0laZyk4QblSeS0FTekYSm0pLQVG5UWhJ+0mGmHGbKYaa8eEilJaGptCQ0lZaEptKScJOEpnKj0pLQVG5UblRaEm5UmkpLwjcdZsphphxmyouHkvBJKi0JN0loKjdJuFFpSWgqN0m4UWlJaEloKk3lmw4z5TBTDjMl/sEXJeFG5ZOScKNyk4Sm8klJeEKlJaGpPHGYKYeZcpgpLx5Kwo3KTRKaSkvCEyotCTcqLQlNpSXhb1L5pMNMOcyUw0x58ZDKEyo3KjdJaCotCe9IwhMq70hCU2lJ+EmHmXKYKYeZ8uKhJPwklZskNJWbJDSVloSWhHckoam8Q6Ul4UblicNMOcyUw0x58WEqn5SEG5WbJLwjCTcqLQk3Ku9Iwt90mCmHmXKYKS++LAnvUPkklZaEptKS0FTekYRvUmlJ+KTDTDnMlMNMefEfk4Sm8g6VloSm0lRaEm5UbpLwDpVPOsyUw0w5zJQXv1wSmso7knCj0pLQVJrKTRKaSlO5ScKNyhOHmXKYKYeZ8uLLVL5J5QmVloQnknCj0pJwo9JUWhI+6TBTDjPlMFNefFgSflIS3qHyjiQ0lZaEdyThRqUl4ScdZsphphxmSvyDmX8cZsphphxmymGmHGbKYaYcZsphphxmymGmHGbKYaYcZsphphxmyv8AFxWXHXyhQE0AAAAASUVORK5CYII="
-];
+const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const RANDOM_QR_STRINGS = Array.from({ length: 50 }, () => 
+  Array.from({ length: 50 }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('')
+);
+
+const DynamicQR = () => {
+  const [qrIndex, setQrIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQrIndex((prevIndex) => (prevIndex + 1) % RANDOM_QR_STRINGS.length);
+    }, 250);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="w-56 h-56 relative inline-block" style={{ transform: 'translateZ(0)', willChange: 'transform' }}>
+      <QRCodeSVG 
+        value={RANDOM_QR_STRINGS[qrIndex]} 
+        level="L"
+        size={224} 
+        className="w-full h-full"
+        marginSize={0}
+      />
+    </div>
+  );
+};
 
 type MainTab = "trips" | "passes";
 type SubTab = "upcoming" | "active" | "expired" | "completed";
@@ -34,18 +53,10 @@ export default function App() {
     return localStorage.getItem("lastValidatedTime") || "13 Apr 2026, 09:48 am";
   });
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number; size: number }[]>([]);
-  const [qrIndex, setQrIndex] = useState(0);
 
   useEffect(() => {
     localStorage.setItem("lastValidatedTime", lastValidatedTime);
   }, [lastValidatedTime]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setQrIndex((prevIndex) => (prevIndex + 1) % QR_BASE64_SET.length);
-    }, 250);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     if (view === "scan") {
@@ -74,6 +85,14 @@ export default function App() {
         if (html5QrCode.isScanning) {
           html5QrCode.stop().catch(console.error);
         }
+        // Force cleanup of stray UI elements injected into body by Html5Qrcode
+        setTimeout(() => {
+          document.querySelectorAll('div[id^="html5-qrcode-"], div[id^="qr-shaded-region"]').forEach(el => {
+            if (el.parentNode === document.body) {
+              el.remove();
+            }
+          });
+        }, 300);
       };
     }
   }, [view]);
@@ -252,14 +271,8 @@ export default function App() {
 
         {/* QR Code Section */}
         <div className="flex flex-col items-center justify-center px-4 mb-8" id="qr-code-section">
-          <div className="bg-white shadow-md border border-gray-100 relative" id="qr-code-container">
-            <div className="w-56 h-56 flex items-center justify-center">
-              <img 
-                src={QR_BASE64_SET[qrIndex]} 
-                className="w-full h-full object-contain"
-                alt="QR Code"
-              />
-            </div>
+          <div className="bg-white shadow-none relative" style={{ width: '224px', height: '224px' }} id="qr-code-container">
+            <DynamicQR />
             {/* Small logo in center of QR */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-1 shadow-sm">
@@ -269,9 +282,9 @@ export default function App() {
               </div>
             </div>
             {/* Fake bottom-right QR position locator overlay to match standard marker */}
-            <div className="absolute bottom-0 right-0 border-t-8 border-l-8 border-white bg-black flex items-center justify-center z-10" style={{ width: '23.5%', height: '23.5%' }}>
-              <div className="bg-white flex items-center justify-center" style={{ width: '70%', height: '70%' }}>
-                <div className="bg-black" style={{ width: '40%', height: '40%' }}></div>
+            <div className="absolute bottom-0 right-0 bg-black flex items-center justify-center z-10" style={{ width: '24.13793%', height: '24.13793%' }}>
+              <div className="bg-white flex items-center justify-center" style={{ width: '71.4285%', height: '71.4285%' }}>
+                <div className="bg-black" style={{ width: '60%', height: '60%' }}></div>
               </div>
             </div>
           </div>
