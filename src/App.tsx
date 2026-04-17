@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { ArrowLeft, Ticket, QrCode, Mail, ChevronRight, Info, Check } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Html5Qrcode } from "html5-qrcode";
-import { QRCodeSVG } from "qrcode.react";
+import QRCode from "qrcode";
 
 const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const RANDOM_QR_STRINGS = Array.from({ length: 50 }, () => 
@@ -16,23 +16,37 @@ const RANDOM_QR_STRINGS = Array.from({ length: 50 }, () =>
 
 const DynamicQR = () => {
   const [qrIndex, setQrIndex] = useState(0);
+  const [qrDataUrls, setQrDataUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setQrIndex((prevIndex) => (prevIndex + 1) % RANDOM_QR_STRINGS.length);
-    }, 250);
-    return () => clearInterval(interval);
+    // Pre-generate all QR codes as data URLs to exactly mimic the static <img> logic
+    // and avoid any rendering engine hitches in light apps/webviews.
+    Promise.all(RANDOM_QR_STRINGS.map(str => 
+      QRCode.toDataURL(str, { errorCorrectionLevel: 'L', width: 224, margin: 0 })
+    )).then(urls => setQrDataUrls(urls));
   }, []);
 
+  useEffect(() => {
+    if (qrDataUrls.length === 0) return;
+    const interval = setInterval(() => {
+      setQrIndex((prevIndex) => (prevIndex + 1) % qrDataUrls.length);
+    }, 250);
+    return () => clearInterval(interval);
+  }, [qrDataUrls]);
+
   return (
-    <div className="w-56 h-56 relative inline-block" style={{ transform: 'translateZ(0)', willChange: 'transform' }}>
-      <QRCodeSVG 
-        value={RANDOM_QR_STRINGS[qrIndex]} 
-        level="L"
-        size={224} 
-        className="w-full h-full"
-        marginSize={0}
-      />
+    <div className="w-56 h-56 relative inline-block text-[0]">
+      {qrDataUrls.length > 0 ? (
+        <img 
+          src={qrDataUrls[qrIndex]} 
+          alt="Valid QR" 
+          className="w-full h-full object-contain mix-blend-multiply"
+          referrerPolicy="no-referrer"
+          style={{ width: '100%', height: '100%', display: 'block' }}
+        />
+      ) : (
+        <div className="w-full h-full bg-white" />
+      )}
     </div>
   );
 };
