@@ -77,6 +77,37 @@ export default function App() {
   });
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number; size: number }[]>([]);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [markerUrl, setMarkerUrl] = useState<string>('');
+
+  useEffect(() => {
+    // Generate the fake right-bottom corner marker as a native Base64 PNG.
+    // We use a Canvas-generated PNG instead of SVG or DOM elements to completely bypass 
+    // Android WebView's Smart Invert / Force Dark mode which ignores complex raster images.
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 70;
+      canvas.height = 70;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#01031c';
+        ctx.fillRect(0, 0, 70, 70);
+        ctx.fillStyle = '#fefefe';
+        ctx.fillRect(10, 10, 50, 50);
+        ctx.fillStyle = '#01031c';
+        ctx.fillRect(20, 20, 30, 30);
+        
+        // Minor pixel noise to break "low-entropy monochrome" inversion heuristics
+        ctx.fillStyle = '#01031d';
+        ctx.fillRect(0, 0, 1, 1);
+        ctx.fillStyle = '#fefefd';
+        ctx.fillRect(10, 10, 1, 1);
+        
+        setMarkerUrl(canvas.toDataURL('image/png'));
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("lastValidatedTime", lastValidatedTime);
@@ -273,16 +304,16 @@ export default function App() {
               </div>
               <div id="field-purchase-date">
                 <p className="text-gray-400 text-sm font-medium mb-1">Pass purchase date</p>
-                <p className="text-gray-700 text-lg font-bold">13 Apr 2026, 07:12 AM</p>
+                <p className="text-gray-700 text-lg font-bold">20 Apr 2026, 07:12 AM</p>
               </div>
               <div id="field-valid-from">
                 <p className="text-gray-400 text-sm font-medium mb-1">Pass valid from</p>
-                <p className="text-gray-700 text-lg font-bold">13 Apr 2026, 12:00 AM</p>
+                <p className="text-gray-700 text-lg font-bold">20 Apr 2026, 12:00 AM</p>
               </div>
               <div className="flex justify-between items-end" id="field-valid-till-container">
                 <div id="field-valid-till">
                   <p className="text-gray-400 text-sm font-medium mb-1">Pass valid till</p>
-                  <p className="text-gray-700 text-lg font-bold">19 Apr 2026, 11:59 PM</p>
+                  <p className="text-gray-700 text-lg font-bold">26 Apr 2026, 11:59 PM</p>
                 </div>
                 <div className="text-right" id="fare-container">
                   <p className="text-gray-400 text-xs font-medium underline mb-1">Pass fare</p>
@@ -331,13 +362,15 @@ export default function App() {
               </div>
             </div>
             {/* Fake bottom-right QR position locator overlay to match standard marker */}
-            <div className="absolute bottom-0 right-0 z-10" style={{ width: '24.13793%', height: '24.13793%' }}>
-              <img 
-                src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMTQgMTQnIGZpbGw9J25vbmUnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHJlY3Qgd2lkdGg9JzE0JyBoZWlnaHQ9JzE0JyBmaWxsPScjMDEwMzFjJy8+PHJlY3QgeD0nMicgeT0nMicgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPScjZmVmZWZlJy8+PHJlY3QgeD0nNCcgeT0nNCcgd2lkdGg9JzYnIGhlaWdodD0nNicgZmlsbD0nIzAxMDMxYycvPjwvc3ZnPg==" 
-                className="w-full h-full object-contain pointer-events-none" 
-                alt="" 
-              />
-            </div>
+            {markerUrl && (
+              <div className="absolute bottom-0 right-0 z-10" style={{ width: '24.13793%', height: '24.13793%' }}>
+                <img 
+                  src={markerUrl}
+                  className="w-full h-full object-contain pointer-events-none" 
+                  alt="" 
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -690,7 +723,7 @@ export default function App() {
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Pass valid till</span>
-                <span className="text-gray-800 font-bold">19 Apr 2026, 11:59 PM</span>
+                <span className="text-gray-800 font-bold">26 Apr 2026, 11:59 PM</span>
               </div>
               
               <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
@@ -845,7 +878,7 @@ export default function App() {
                 <div className="flex justify-between items-end mt-4">
                   <div>
                     <p className="text-sm opacity-90 font-medium">Pass valid till</p>
-                    <p className="text-lg font-bold" id="pass-expiry">19 Apr 2026, 11:59 PM</p>
+                    <p className="text-lg font-bold" id="pass-expiry">26 Apr 2026, 11:59 PM</p>
                   </div>
                   <div 
                     className="bg-white/20 group-hover:bg-white/30 text-white p-3 rounded-xl transition-all active:scale-95"
