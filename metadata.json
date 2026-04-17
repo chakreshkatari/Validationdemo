@@ -1,0 +1,5 @@
+{
+  "name": "validation demo project",
+  "description": "A replica of a transit pass management interface with active pass details and booking options.",
+  "requestFramePermissions": ["camera"]
+}
