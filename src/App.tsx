@@ -331,10 +331,12 @@ export default function App() {
               </div>
             </div>
             {/* Fake bottom-right QR position locator overlay to match standard marker */}
-            <div className="absolute bottom-0 right-0 flex items-center justify-center z-10" style={{ width: '24.13793%', height: '24.13793%', backgroundColor: '#01031c', colorScheme: 'light' }}>
-              <div className="flex items-center justify-center" style={{ width: '71.4285%', height: '71.4285%', backgroundColor: '#fefefe' }}>
-                <div style={{ width: '60%', height: '60%', backgroundColor: '#01031c' }}></div>
-              </div>
+            <div className="absolute bottom-0 right-0 z-10" style={{ width: '24.13793%', height: '24.13793%' }}>
+              <img 
+                src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMTQgMTQnIGZpbGw9J25vbmUnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHJlY3Qgd2lkdGg9JzE0JyBoZWlnaHQ9JzE0JyBmaWxsPScjMDEwMzFjJy8+PHJlY3QgeD0nMicgeT0nMicgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPScjZmVmZWZlJy8+PHJlY3QgeD0nNCcgeT0nNCcgd2lkdGg9JzYnIGhlaWdodD0nNicgZmlsbD0nIzAxMDMxYycvPjwvc3ZnPg==" 
+                className="w-full h-full object-contain pointer-events-none" 
+                alt="" 
+              />
             </div>
           </div>
         </div>
