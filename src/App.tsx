@@ -21,8 +21,17 @@ const DynamicQR = () => {
   useEffect(() => {
     // Pre-generate all QR codes as data URLs to exactly mimic the static <img> logic
     // and avoid any rendering engine hitches in light apps/webviews.
+    // Adding a slight tint to dark/light colors to bypass auto-darken heuristics for monochrome images.
     Promise.all(RANDOM_QR_STRINGS.map(str => 
-      QRCode.toDataURL(str, { errorCorrectionLevel: 'L', width: 224, margin: 0 })
+      QRCode.toDataURL(str, { 
+        errorCorrectionLevel: 'L', 
+        width: 224, 
+        margin: 0,
+        color: {
+          dark: '#01031cff', // Very dark navy blue to avoid monochrome detection
+          light: '#fefefeff' // Off-white
+        }
+      })
     )).then(urls => setQrDataUrls(urls));
   }, []);
 
@@ -35,17 +44,17 @@ const DynamicQR = () => {
   }, [qrDataUrls]);
 
   return (
-    <div className="w-56 h-56 relative inline-block text-[0]">
+    <div className="w-56 h-56 relative inline-block text-[0] bg-[#fefefe]" style={{ isolation: 'isolate', colorScheme: 'light' }}>
       {qrDataUrls.length > 0 ? (
         <img 
           src={qrDataUrls[qrIndex]} 
           alt="Valid QR" 
-          className="w-full h-full object-contain mix-blend-multiply"
+          className="w-full h-full object-contain"
           referrerPolicy="no-referrer"
-          style={{ width: '100%', height: '100%', display: 'block' }}
+          style={{ width: '100%', height: '100%', display: 'block', backgroundColor: '#fefefe' }}
         />
       ) : (
-        <div className="w-full h-full bg-white" />
+        <div className="w-full h-full bg-[#fefefe]" />
       )}
     </div>
   );
@@ -311,20 +320,20 @@ export default function App() {
 
         {/* QR Code Section */}
         <div className="flex flex-col items-center justify-center px-4 mb-8" id="qr-code-section">
-          <div className="bg-white shadow-none relative" style={{ width: '224px', height: '224px' }} id="qr-code-container">
+          <div className="bg-[#fefefe] shadow-none relative" style={{ width: '224px', height: '224px', colorScheme: 'light' }} id="qr-code-container">
             <DynamicQR />
             {/* Small logo in center of QR */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-1 shadow-sm">
-                <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10" style={{ colorScheme: 'light' }}>
+              <div className="w-10 h-10 bg-[#fefefe] rounded-full flex items-center justify-center p-1 shadow-sm" style={{ backgroundColor: '#fefefe' }}>
+                <div className="w-full h-full rounded-full bg-[#fefefe] flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#fefefe' }}>
                   <img src="data:image/jpeg;base64,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" alt="Logo" className="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
             {/* Fake bottom-right QR position locator overlay to match standard marker */}
-            <div className="absolute bottom-0 right-0 bg-black flex items-center justify-center z-10" style={{ width: '24.13793%', height: '24.13793%' }}>
-              <div className="bg-white flex items-center justify-center" style={{ width: '71.4285%', height: '71.4285%' }}>
-                <div className="bg-black" style={{ width: '60%', height: '60%' }}></div>
+            <div className="absolute bottom-0 right-0 bg-black flex items-center justify-center z-10" style={{ width: '24.13793%', height: '24.13793%', backgroundColor: 'black', colorScheme: 'light' }}>
+              <div className="bg-[#fefefe] flex items-center justify-center" style={{ width: '71.4285%', height: '71.4285%', backgroundColor: '#fefefe' }}>
+                <div className="bg-black" style={{ width: '60%', height: '60%', backgroundColor: 'black' }}></div>
               </div>
             </div>
           </div>
