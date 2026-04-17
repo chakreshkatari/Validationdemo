@@ -331,9 +331,9 @@ export default function App() {
               </div>
             </div>
             {/* Fake bottom-right QR position locator overlay to match standard marker */}
-            <div className="absolute bottom-0 right-0 bg-black flex items-center justify-center z-10" style={{ width: '24.13793%', height: '24.13793%', backgroundColor: 'black', colorScheme: 'light' }}>
-              <div className="bg-[#fefefe] flex items-center justify-center" style={{ width: '71.4285%', height: '71.4285%', backgroundColor: '#fefefe' }}>
-                <div className="bg-black" style={{ width: '60%', height: '60%', backgroundColor: 'black' }}></div>
+            <div className="absolute bottom-0 right-0 flex items-center justify-center z-10" style={{ width: '24.13793%', height: '24.13793%', backgroundColor: '#01031c', colorScheme: 'light' }}>
+              <div className="flex items-center justify-center" style={{ width: '71.4285%', height: '71.4285%', backgroundColor: '#fefefe' }}>
+                <div style={{ width: '60%', height: '60%', backgroundColor: '#01031c' }}></div>
               </div>
             </div>
           </div>
