@@ -53,6 +53,7 @@ export default function App() {
     return localStorage.getItem("lastValidatedTime") || "13 Apr 2026, 09:48 am";
   });
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number; size: number }[]>([]);
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem("lastValidatedTime", lastValidatedTime);
@@ -60,26 +61,51 @@ export default function App() {
 
   useEffect(() => {
     if (view === "scan") {
+      setCameraError(null);
       const html5QrCode = new Html5Qrcode("camera-placeholder");
       
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-          html5QrCode.stop().then(() => {
-            setLastValidatedTime(getCurrentDateTime());
-            setView("list");
-            setMainTab("passes");
-            setSubTab("active");
-            setShowSuccessModal(true);
-            setBusDigits(["", "", "", ""]);
-            setShowKeyboard(false);
-          }).catch(console.error);
-        },
-        (error) => {
-          // Ignore scanning errors
+      const onScanSuccess = (decodedText: string) => {
+        html5QrCode.stop().then(() => {
+          setLastValidatedTime(getCurrentDateTime());
+          setView("list");
+          setMainTab("passes");
+          setSubTab("active");
+          setShowSuccessModal(true);
+          setBusDigits(["", "", "", ""]);
+          setShowKeyboard(false);
+        }).catch(console.error);
+      };
+
+      const startScanner = async () => {
+        try {
+          await html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            onScanSuccess,
+            () => {} // Ignore scanning errors
+          );
+        } catch (err) {
+          console.warn("Failed with environment camera, trying fallback", err);
+          try {
+            const cameras = await Html5Qrcode.getCameras();
+            if (cameras && cameras.length > 0) {
+              await html5QrCode.start(
+                cameras[0].id,
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanSuccess,
+                () => {}
+              );
+            } else {
+              setCameraError("No camera devices found");
+            }
+          } catch (fallbackErr: any) {
+            console.error("Fallback camera failed", fallbackErr);
+            setCameraError(fallbackErr?.message || "Failed to start camera");
+          }
         }
-      ).catch(console.error);
+      };
+
+      startScanner();
 
       return () => {
         if (html5QrCode.isScanning) {
@@ -348,7 +374,25 @@ export default function App() {
     return (
       <div className="flex-1 bg-black flex flex-col relative overflow-hidden" id="scan-view">
         {/* Camera View Area */}
-        <div className="flex-1 w-full h-full" id="camera-placeholder"></div>
+        <div className="flex-1 w-full h-full relative" id="camera-placeholder">
+          {cameraError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-[100] px-6 text-center">
+              <div className="bg-white rounded-xl p-6 shadow-xl max-w-sm w-full relative z-[101]">
+                <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Info className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Camera Access Error</h3>
+                <p className="text-gray-600 text-sm">{cameraError}</p>
+                <button 
+                  onClick={() => setView("list")}
+                  className="mt-6 w-full bg-[#a3cf62] hover:bg-[#8eb854] text-white font-bold py-3 rounded-xl transition-colors"
+                >
+                  Go Back
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Floating Tooltip */}
         <div className="absolute top-36 left-1/2 -translate-x-1/2 w-[90%] z-10" id="scan-tooltip">
