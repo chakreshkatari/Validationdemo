@@ -290,9 +290,19 @@ export default function App() {
           <h3 className="text-gray-700 font-bold mb-3 px-1" id="booking-details-header">Booking Details</h3>
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative" id="booking-details-card">
             <div className="space-y-5">
-              <div id="field-passenger">
-                <p className="text-gray-400 text-sm font-medium mb-1">Passenger name</p>
-                <p className="text-gray-700 text-lg font-bold">K Chakresh</p>
+              <div className="flex justify-between items-center" id="field-passenger-container">
+                <div id="field-passenger">
+                  <p className="text-gray-400 text-sm font-medium mb-1">Passenger name</p>
+                  <p className="text-gray-700 text-lg font-bold">K Chakresh</p>
+                </div>
+                <div className="w-14 h-14 rounded-full overflow-hidden border border-gray-100 shrink-0 shadow-sm bg-gray-50">
+                  <img 
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW4H8U6bqxpynXDJNyx_6QtWgDp_If88pctQ6OlChOPop2K9UUGofnSNrx&s=10" 
+                    alt="Passenger" 
+                    className="w-full h-full object-cover" 
+                    referrerPolicy="no-referrer" 
+                  />
+                </div>
               </div>
               <div id="field-id-type">
                 <p className="text-gray-400 text-sm font-medium mb-1">Identification type</p>
