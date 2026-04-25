@@ -314,16 +314,16 @@ export default function App() {
               </div>
               <div id="field-purchase-date">
                 <p className="text-gray-400 text-sm font-medium mb-1">Pass purchase date</p>
-                <p className="text-gray-700 text-lg font-bold">20 Apr 2026, 07:12 AM</p>
+                <p className="text-gray-700 text-lg font-bold">27 Apr 2026, 07:12 AM</p>
               </div>
               <div id="field-valid-from">
                 <p className="text-gray-400 text-sm font-medium mb-1">Pass valid from</p>
-                <p className="text-gray-700 text-lg font-bold">20 Apr 2026, 12:00 AM</p>
+                <p className="text-gray-700 text-lg font-bold">27 Apr 2026, 12:00 AM</p>
               </div>
               <div className="flex justify-between items-end" id="field-valid-till-container">
                 <div id="field-valid-till">
                   <p className="text-gray-400 text-sm font-medium mb-1">Pass valid till</p>
-                  <p className="text-gray-700 text-lg font-bold">26 Apr 2026, 11:59 PM</p>
+                  <p className="text-gray-700 text-lg font-bold">03 May 2026, 11:59 PM</p>
                 </div>
                 <div className="text-right" id="fare-container">
                   <p className="text-gray-400 text-xs font-medium underline mb-1">Pass fare</p>
@@ -733,7 +733,7 @@ export default function App() {
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Pass valid till</span>
-                <span className="text-gray-800 font-bold">26 Apr 2026, 11:59 PM</span>
+                <span className="text-gray-800 font-bold">03 May 2026, 11:59 PM</span>
               </div>
               
               <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
@@ -888,7 +888,7 @@ export default function App() {
                 <div className="flex justify-between items-end mt-4">
                   <div>
                     <p className="text-sm opacity-90 font-medium">Pass valid till</p>
-                    <p className="text-lg font-bold" id="pass-expiry">26 Apr 2026, 11:59 PM</p>
+                    <p className="text-lg font-bold" id="pass-expiry">03 May 2026, 11:59 PM</p>
                   </div>
                   <div 
                     className="bg-white/20 group-hover:bg-white/30 text-white p-3 rounded-xl transition-all active:scale-95"
