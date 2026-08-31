@@ -321,7 +321,7 @@ export default function App() {
               </div>
               <div id="field-purchase-date">
                 <p className="text-gray-400 text-sm font-medium mb-1">Pass purchase date</p>
-                <p className="text-gray-700 text-lg font-bold">31 Aug 2026, 07:12 AM</p>
+                <p className="text-gray-700 text-lg font-bold">31 Aug 2026, 06:28 AM</p>
               </div>
               <div id="field-valid-from">
                 <p className="text-gray-400 text-sm font-medium mb-1">Pass valid from</p>
