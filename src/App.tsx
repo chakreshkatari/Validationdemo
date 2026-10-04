@@ -895,7 +895,7 @@ export default function App() {
                 <div className="flex justify-between items-end mt-4">
                   <div>
                     <p className="text-sm opacity-90 font-medium">Pass valid till</p>
-                    <p className="text-lg font-bold" id="pass-expiry">04 Oct 2026, 11:59 PM</p>
+                    <p className="text-lg font-bold" id="pass-expiry">11 Oct 2026, 11:59 PM</p>
                   </div>
                   <div 
                     className="bg-white/20 group-hover:bg-white/30 text-white p-3 rounded-xl transition-all active:scale-95"
